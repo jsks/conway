@@ -23,8 +23,8 @@ int main(int argc, char *argv[]) {
 
   Board *board = init_board(height, width);
 
-  FILE *fp;
   if (argc > 1) {
+    FILE *fp;
     if (!(fp = fopen(argv[1], "r")))
       cerr(NULL);
 
@@ -39,13 +39,19 @@ int main(int argc, char *argv[]) {
 
   while (true) {
     switch ((ch = getch())) {
+      case '?':
+        help_popup();
+        break;
       case 'Q':
       case 'q':
         quit();
       case 'p':
       case 'P':
       case ' ':
-        paused = !paused;
+        if ((paused = !paused))
+          timeout(-1);
+        else
+          timeout(tick_ms);
         break;
       case KEY_LEFT:
         inc_tick_ms();

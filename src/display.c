@@ -24,3 +24,29 @@ void draw_board(Board *board) {
 
   refresh();
 }
+
+void help_popup(void) {
+  extern unsigned int tick_ms;
+  timeout(-1);
+
+  int height, width;
+  getmaxyx(stdscr, height, width);
+
+  WINDOW *popup = newwin(7, 46, (height - 7) / 2, (width - 46) / 2);
+  mvwprintw(popup, 1, 1,
+            "Keybindings:\n"
+            "\tq, Q\t\t Quit\n"
+            "\tp, P, <space>\t Pause\n"
+            "\t<KEY_LEFT>\t Decrease tick delay\n"
+            "\t<KEY_RIGHT>\t Increase tick delay\n");
+
+  box(popup, 0, 0);
+  wrefresh(popup);
+
+  wgetch(popup);
+  delwin(popup);
+
+  touchwin(stdscr);
+  refresh();
+  timeout(tick_ms);
+}

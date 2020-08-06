@@ -5,5 +5,6 @@
 
 void init_display(void);
 void draw_board(Board *);
+void help_popup(void);
 
 #endif
