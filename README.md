@@ -12,7 +12,7 @@ $ ./conway
 
 Press 'q' or CTRL-C to exit. A full list of keybindings can be displayed by pressing '?'.
 
-`conway` can also read a starting position from a cells formated text file.
+`conway` can also read a starting position from a cells formatted text file.
 
 ```sh
 $ ./conway patterns/glider.cells
