@@ -7,7 +7,13 @@ A C implementation of Conway's Game of Life using ncurses.
 ```sh
 # Substitute `gmake` if on *BSD
 $ make
-$ ./conway patterns/glider.cells
+$ ./conway
 ```
 
-Type 'q' or CTRL-C to exit.
+Press 'q' or CTRL-C to exit. A full list of keybindings can be displayed by pressing '?'.
+
+`conway` can also read a starting position from a cells formated text file.
+
+```sh
+$ ./conway patterns/glider.cells
+```
