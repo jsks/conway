@@ -1,22 +1,26 @@
 SRC_FILES    := $(wildcard src/*.c)
-HEADER_FILES := $(wildcard src/*.h)
-
 OBJ_FILES    := $(SRC_FILES:%.c=%.o)
+DEPS         := $(OBJ_FILES:%.o=%.d)
 
 CFLAGS = -O2 -g -Wall -Wextra -pipe
-LDFLAGS = -lncurses
+ifeq ($(shell uname), NetBSD)
+	LDFLAGS = -lcurses
+else
+	LDFLAGS = -lncurses
+endif
 
 all: conway
 .PHONY: clean fmt
 
+-include $(DEPS)
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -MMD -c $< -o $@
 
-conway: $(OBJ_FILES) $(HEADER_FILES)
+conway: $(OBJ_FILES)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJ_FILES) -o $@
 
 clean:
-	rm -rf conway $(OBJ_FILES)
+	rm -rf conway $(OBJ_FILES) $(DEPS)
 
 fmt:
 	clang-format -i --Werror --style=file src/*.c
