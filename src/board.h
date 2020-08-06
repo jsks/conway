@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#define Cpair(x, y) (Coordinates) { x, y }
+
 typedef struct {
   size_t rows, columns;
   int **data;

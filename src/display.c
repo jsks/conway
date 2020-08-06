@@ -1,11 +1,8 @@
+#include <curses.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
 #include "display.h"
-
-void cleanup(void) {
-  endwin();
-}
 
 void init_display(void) {
   initscr();
@@ -14,8 +11,6 @@ void init_display(void) {
   keypad(stdscr, true);
 
   curs_set(0);
-
-  atexit(cleanup);
 }
 
 void draw_board(Board *board) {
@@ -23,7 +18,7 @@ void draw_board(Board *board) {
     move(i, 1);
 
     for (size_t j = 0; j < board->columns; j++) {
-      printw("%c", (isset(board, (Coordinates){ i, j })) ? '#' : ' ');
+      printw("%c", (isset(board, Cpair(i, j))) ? '#' : ' ');
     }
   }
 

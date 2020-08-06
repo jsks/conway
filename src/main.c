@@ -1,5 +1,4 @@
 #include <curses.h>
-#include <err.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,11 +7,13 @@
 #include "board.h"
 #include "conway.h"
 #include "display.h"
+#include "misc.h"
 
 unsigned int tick_ms = 128;
 
 int main(int argc, char *argv[]) {
   srand(time(NULL));
+  handle_signals();
 
   init_display();
   timeout(tick_ms);
@@ -25,10 +26,9 @@ int main(int argc, char *argv[]) {
   FILE *fp;
   if (argc > 1) {
     if (!(fp = fopen(argv[1], "r")))
-      err(EXIT_FAILURE, NULL);
+      cerr(NULL);
 
-    load_file(fp, board);
-    center(&board);
+    load_file(fp, &board);
   } else {
     rpopulate(board, 0.3);
   }
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
     switch ((ch = getch())) {
       case 'Q':
       case 'q':
-        exit(EXIT_SUCCESS);
+        quit();
       case 'p':
       case 'P':
       case ' ':
@@ -61,5 +61,5 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  return EXIT_SUCCESS;
+  quit();
 }

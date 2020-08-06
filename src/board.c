@@ -1,63 +1,71 @@
-#include <err.h>
-#include <stdbool.h>
 #include <string.h>
 
 #include "board.h"
+#include "misc.h"
 
 Board *init_board(size_t rows, size_t columns) {
   Board *board;
 
   if (!(board = malloc(sizeof(Board))))
-    err(EXIT_FAILURE, NULL);
+    cerr(NULL);
 
   board->rows = rows;
   board->columns = columns;
 
   if (!(board->data = malloc(rows * sizeof(int *))))
-    err(EXIT_FAILURE, NULL);
+    cerr(NULL);
 
   for (size_t i = 0; i < rows; i++) {
     if (!(board->data[i] = calloc(columns, sizeof(int))))
-      err(EXIT_FAILURE, NULL);
+      cerr(NULL);
   }
 
   return board;
 }
 
-Coordinates find_min_cell(Board *board) {
+bool find_min_cell(Board *board, Coordinates *min) {
   for (size_t i = 0; i < board->rows; i++) {
     for (size_t j = 0; j < board->columns; j++) {
-      if (isset(board, (Coordinates){ i, j }))
-        return (Coordinates){ i, j };
+      if (isset(board, Cpair(i, j))) {
+        min->x = i;
+        min->y = j;
+        return true;
+      }
     }
   }
 
-  return (Coordinates){ 0, 0 };
+  return false;
 }
 
-Coordinates find_max_cell(Board *board) {
+bool find_max_cell(Board *board, Coordinates *max) {
   for (size_t i = board->rows - 1; i > 0; i--) {
     for (size_t j = board->columns - 1; j > 0; j--) {
-      if (isset(board, (Coordinates){ i, j }))
-        return (Coordinates){ i, j };
+      if (isset(board, Cpair(i, j))) {
+        max->x = i;
+        max->y = j;
+        return true;
+      }
     }
   }
 
-  return (Coordinates){ 0, 0 };
+  return false;
 }
 
 void center(Board **board) {
   Board *new = init_board((*board)->rows, (*board)->columns);
+  Coordinates min, max;
 
-  Coordinates min = find_min_cell(*board), max = find_max_cell(*board);
+  // If the board is empty just return it as is
+  if (!(find_min_cell(*board, &min)) || !(find_max_cell(*board, &max)))
+    return;
 
   size_t offset_x = ((*board)->rows - max.x - 1) / 2 - min.x,
          offset_y = ((*board)->columns - max.y - 1) / 2 - min.y;
 
-  for (size_t i = min.x; i <= max.x; i++) {
+  for (size_t i = min.x; i <= (size_t) max.x; i++) {
     for (size_t j = 0; j < (*board)->columns; j++) {
-      if (isset(*board, (Coordinates){ i, j }))
-        set(new, (Coordinates){ i + offset_x, j + offset_y });
+      if (isset(*board, Cpair(i, j)))
+        set(new, Cpair(i + offset_x, j + offset_y));
     }
   }
 
@@ -80,13 +88,14 @@ bool isset(Board *board, Coordinates pos) {
 unsigned int neighbourhood_sum(Board *board, Coordinates p) {
   unsigned int sum = 0;
 
-  int start_row = (p.x == 0) ? 0 : p.x - 1, end_row = (p.x == board->rows - 1) ? p.x + 1 : p.x + 2,
+  int start_row = (p.x == 0) ? 0 : p.x - 1,
+      end_row = (p.x == board->rows - 1) ? p.x + 1 : p.x + 2,
       start_col = (p.y == 0) ? 0 : p.y - 1,
       end_col = (p.y == board->columns - 1) ? p.y + 1 : p.y + 2;
 
   for (int i = start_row; i < end_row; i++) {
     for (int j = start_col; j < end_col; j++) {
-      sum += isset(board, (Coordinates){ i, j });
+      sum += isset(board, Cpair(i, j));
     }
   }
 
@@ -107,7 +116,7 @@ void copy(Board *src, Board **dest) {
     *dest = init_board(src->rows, src->columns);
 
   if ((*dest)->rows < src->rows || (*dest)->columns < src->columns)
-    errx(EXIT_FAILURE, "Cannot copy: dest smaller than src");
+    cerrx("Cannot copy: dest smaller than src");
 
   for (size_t i = 0; i < src->rows; i++) {
     memcpy((*dest)->data[i], src->data[i], src->columns * sizeof(int));

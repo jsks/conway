@@ -17,7 +17,7 @@ extern unsigned int tick_ms;
   timeout(tick_ms);                             \
 }                                               \
 
-void load_file(FILE *, Board *);
-void tick(Board **board);
+void load_file(FILE *, Board **);
+void tick(Board **);
 
 #endif
