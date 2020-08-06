@@ -2,7 +2,7 @@ SRC_FILES    := $(wildcard src/*.c)
 OBJ_FILES    := $(SRC_FILES:%.c=%.o)
 DEPS         := $(OBJ_FILES:%.o=%.d)
 
-CFLAGS = -O2 -g -Wall -Wextra -pipe
+CFLAGS = -O2 -g -Wall -Wextra -Wno-implicit-fallthrough -pipe
 ifeq ($(shell uname), NetBSD)
 	LDFLAGS = -lcurses
 else
