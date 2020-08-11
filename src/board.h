@@ -19,7 +19,6 @@ Board *init_board(size_t, size_t);
 void set(Board *, Coordinates);
 void unset(Board *, Coordinates);
 bool isset(Board *, Coordinates);
-int get(Board *, Coordinates);
 void center(Board **);
 void copy(Board *, Board **);
 void destroy(Board *);

@@ -23,7 +23,19 @@ Board *init_board(size_t rows, size_t columns) {
   return board;
 }
 
-bool find_min_cell(Board *board, Coordinates *min) {
+void set(Board *board, Coordinates pos) {
+  board->data[pos.x][pos.y] = 1;
+}
+
+void unset(Board *board, Coordinates pos) {
+  board->data[pos.x][pos.y] = 0;
+}
+
+bool isset(Board *board, Coordinates pos) {
+  return board->data[pos.x][pos.y] > 0;
+}
+
+static bool find_min_cell(Board *board, Coordinates *min) {
   for (size_t i = 0; i < board->rows; i++) {
     for (size_t j = 0; j < board->columns; j++) {
       if (isset(board, Cpair(i, j))) {
@@ -37,7 +49,7 @@ bool find_min_cell(Board *board, Coordinates *min) {
   return false;
 }
 
-bool find_max_cell(Board *board, Coordinates *max) {
+static bool find_max_cell(Board *board, Coordinates *max) {
   for (size_t i = board->rows - 1; i > 0; i--) {
     for (size_t j = board->columns - 1; j > 0; j--) {
       if (isset(board, Cpair(i, j))) {
@@ -73,17 +85,6 @@ void center(Board **board) {
   *board = new;
 }
 
-void set(Board *board, Coordinates pos) {
-  board->data[pos.x][pos.y] = 1;
-}
-
-void unset(Board *board, Coordinates pos) {
-  board->data[pos.x][pos.y] = 0;
-}
-
-bool isset(Board *board, Coordinates pos) {
-  return board->data[pos.x][pos.y] > 0;
-}
 
 unsigned int neighbourhood_sum(Board *board, Coordinates p) {
   unsigned int sum = 0;

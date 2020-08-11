@@ -35,10 +35,9 @@ int main(int argc, char *argv[]) {
 
   draw_board(board);
   bool paused = false;
-  int ch;
 
   while (true) {
-    switch ((ch = getch())) {
+    switch ((getch())) {
       case '?':
         help_popup();
         break;
